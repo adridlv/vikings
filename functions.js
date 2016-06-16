@@ -61,11 +61,11 @@ Viking.prototype.hit = function(defender){
 	var healthDefender = defender.health;
 	var fightFinished = false;
 
-	console.log("Damage Attacker: "+damage + " Health Defender: "+healthDefender);
+	console.log("Damage Attacker: "+ damage + " Health Defender: "+healthDefender);
 
 	if(healthDefender - damage > 0){
 		defender.hurt(damage);
-		console.log("New health defender: "+defender.health);
+		console.log("New health defender: "+ defender.health);
 	}
 	else{
 		console.log("Training finished");
@@ -74,6 +74,8 @@ Viking.prototype.hit = function(defender){
 	
 	return fightFinished;
 }
+
+//la función tiene dependecia de defender. Se utiliza en su lugar la función generateDamage que no hay que parámetro
 /*
 Viking.prototype.attack = function(defender){
 	var damage = this.generateDamage();
@@ -113,7 +115,8 @@ function createSaxon(){
 	return saxon;
 }
 
-function turnHitTraining(attacker, defender){
+
+function hitEnemyTraining (attacker, defender) {
 	var fightFinished = false;
 	var damage = attacker.generateDamage();
 	var healthDefender = defender.health;
@@ -128,37 +131,32 @@ function turnHitTraining(attacker, defender){
 	else{
 		console.log("Training finished");
 		fightFinished = true;
-	}
+	} 
 
+	return fightFinished;
+}
+
+function turnHitTraining(attacker, defender){
+	var fightFinished = false;
+
+	fightFinished = hitEnemyTraining(attacker,defender);
+	
 	if(!fightFinished){
-		console.log("=====  "+ defender.name+ " turn =======");
-
-		var damageDefender = defender.generateDamage();
-		var healthAttacker = attacker.health;
-
-		if(healthAttacker - damageDefender > 0){
-			console.log("Damage Attacker: " +damageDefender + " Health Defender: " + healthAttacker);
-			attacker.hurt(damage);
-			console.log("New health: "+attacker.health);
-		}
-		else{
-			console.log("Training finished");
-			fightFinished = true;
-		}
+		fightFinished = hitEnemyTraining(defender,attacker);
 	}
 
 	return fightFinished;
 }
 
 
-function turnAttackFight(attacker, defender){
+function hitEnemy (attacker, defender) {
 	var fightFinished = false;
 	var damage = attacker.generateDamage();
 	var healthDefender = defender.health;
 
 	console.log("===== " + attacker.name +" turn =======");
 
-	console.log("Damage Attacker: " +damage + " Health Defender: " + healthDefender);
+	console.log("Damage Attacker: " + damage + " Health Defender: " + healthDefender);
 	
 	defender.hurt(damage);
 	
@@ -166,21 +164,16 @@ function turnAttackFight(attacker, defender){
 		console.log("Fight finished");
 		fightFinished = true;
 	}
+
+	return fightFinished;
+}
+
+function turnAttackFight(attacker, defender){
+	var fightFinished = false;
 	
-	if(!fightFinished){
-
-		var damageDefender = defender.generateDamage();
-		var healthAttacker = attacker.health;
-
-		console.log("=====  "+ defender.name+ " turn =======");
-		console.log("Damage Attacker: " +damageDefender + " Health Defender: " + healthAttacker);
-				
-		attacker.hurt(damage);
-		
-		if(attacker.health <= 0){
-			console.log("Fight finished");
-			fightFinished = true;
-		}
+	fightFinished = hitEnemy (attacker, defender);
+	if (!fightFinished) {
+		fightFinished = hitEnemy (defender, attacker);
 	}
 
 	return fightFinished;
@@ -212,6 +205,8 @@ Pit.prototype.vikingTraining = function(){
 	var finish = false;
 	var turn;
 
+	console.log("////////////////START TRAINING////////////////");
+
 	while(!finish){
 		turn = generateRandom(1,2);
 
@@ -227,7 +222,7 @@ Pit.prototype.vikingTraining = function(){
 
 
 var Fight = function(){
-	this.vikingArray =[],
+	this.vikingArray = [],
 	this.saxonArray = [];
 }
 
@@ -278,3 +273,7 @@ fight.generateArmy();
 fight.battle();
 fight.counter(fight.vikingArray, "vikings");
 fight.counter(fight.saxonArray, "saxons");
+
+
+var pit = new Pit (viking1, viking2);
+pit.vikingTraining();
